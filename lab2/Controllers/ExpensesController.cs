@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using lab2.Data;
 using lab2.Models;
+using lab2.ViewModel;
 
 namespace lab2.Controllers
 {
@@ -20,6 +21,7 @@ namespace lab2.Controllers
         {
             _context = context;
         }
+
 
         // GET: api/Expenses
         [HttpGet]
@@ -49,6 +51,47 @@ namespace lab2.Controllers
 
             return expense;
         }
+        [HttpGet("{id}/Comments")]
+        public ActionResult<ExpensesWithCommentsViewModel> GetCommentsForExpense(int id)
+        {
+            var query = _context.Comments.Where(c => c.Expense.Id == id).Select(c => new ExpensesWithCommentsViewModel
+            {
+                Id = c.Expense.Id,
+                Name = c.Expense.Name,
+                Description = c.Expense.Description,
+                Sum = c.Expense.Sum,
+                Date = c.Expense.Date,
+                Type = c.Expense.Type,
+                Location = c.Expense.Location,
+                Currency = c.Expense.Currency,
+                Comments = c.Expense.Comments.Select(pc => new CommentViewModel
+                {
+                    Id = pc.Id,
+                    Content = pc.Content,
+                    DateTime = pc.DateTime,
+                    Stars = pc.Stars
+                })
+            });
+
+            return query.ToList()[0];
+        }
+
+        [HttpPost("{id}/Comments")]
+        public IActionResult PostCommentForExpense(int id, Comment comment)
+        {
+            var expense = _context.Expense.Where(p => p.Id == id).Include(p => p.Comments).FirstOrDefault();
+            if (expense == null)
+            {
+                return NotFound();
+            }
+
+            expense.Comments.Add(comment);
+            _context.Entry(expense).State = EntityState.Modified;
+            _context.SaveChanges();
+
+            return Ok();
+        }
+
 
         // PUT: api/Expenses/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

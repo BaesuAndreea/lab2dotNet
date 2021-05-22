@@ -39,5 +39,6 @@ namespace lab2.Models
         public string Currency { get; set; }
 
         public Types Type { get; set; }
+        public List<Comment> Comments { get; set; }
     }
 }

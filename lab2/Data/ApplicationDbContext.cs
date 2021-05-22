@@ -18,6 +18,7 @@ namespace lab2.Data
         {
         }
         public DbSet<lab2.Models.Expense> Expense { get; set; }
+        public DbSet<Comment> Comments { get; set; }
 
     }
 }
