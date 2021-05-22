@@ -17,5 +17,7 @@ namespace lab2.Data
             IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
         {
         }
+        public DbSet<lab2.Models.Expense> Expense { get; set; }
+
     }
 }
