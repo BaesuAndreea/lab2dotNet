@@ -25,15 +25,15 @@ namespace lab2.Models
         [Required]
         public string Name { get; set; }
 
-        [MinLength(10)]
+        //[MinLength(10)]
         public string Description { get; set; }
 
-        [Range(10, Double.MaxValue)]
+        //[Range(10, Double.MaxValue)]
         public double Sum { get; set; }
 
         public DateTime Date { get; set; }
 
-        [MinLength(3)]
+        //[MinLength(3)]
         public string Location { get; set; }
 
         public string Currency { get; set; }

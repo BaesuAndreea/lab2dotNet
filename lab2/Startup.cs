@@ -1,5 +1,9 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using lab2.Data;
 using lab2.Models;
+using lab2.Validators;
+using lab2.ViewModel;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -45,7 +49,9 @@ namespace lab2
 
             services.AddAuthentication()
                 .AddIdentityServerJwt();
-            services.AddControllersWithViews();
+            services.AddControllersWithViews()
+                .AddFluentValidation()
+                .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter()));
             services.AddRazorPages();
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -82,6 +88,7 @@ namespace lab2
             });
 
 
+            services.AddTransient<IValidator<ExpensesViewModel>, ExpenseValidator>(); // sau add scoped
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

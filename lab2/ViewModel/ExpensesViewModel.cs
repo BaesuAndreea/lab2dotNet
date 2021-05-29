@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using lab2.Models;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,8 +14,10 @@ namespace lab2.ViewModel
         public string Name { get; set; }
 
         public string Description { get; set; }
+        public string Location { get; set; }
 
-        public double Value { get; set; }
+        public double Sum { get; set; }
+        public Types Type { get; set; }
 
         public DateTime Date { get; set; }
     }
