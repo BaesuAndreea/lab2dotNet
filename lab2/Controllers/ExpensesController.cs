@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using lab2.Data;
 using lab2.Models;
 using lab2.ViewModel;
+using AutoMapper;
 
 namespace lab2.Controllers
 {
@@ -16,16 +17,24 @@ namespace lab2.Controllers
     public class ExpensesController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-
-        public ExpensesController(ApplicationDbContext context)
+        private readonly IMapper _mapper;
+        public ExpensesController(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
 
+        /// <summary>
+        /// filter expenses 
+        /// </summary>
+        /// <param name="type">type to filter</param>
+        /// <param name="minDate">min date</param>
+        /// <param name="maxDate">max date</param>
+        /// <returns>list of expenses</returns>
         // GET: api/Expenses
         [HttpGet]
-        [Route("filter/{name}/{minDate}/{maxDate}")]
+        [Route("filter/{type}/{minDate}/{maxDate}")]
         public async Task<ActionResult<IEnumerable<Expense>>> FilterExpense(Types type, DateTime minDate, DateTime maxDate)
         {
             return await _context.Expense.Where(e=> e.Type == type && e.Date>=minDate && e.Date <= maxDate).ToListAsync();
@@ -35,12 +44,13 @@ namespace lab2.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Expense>>> GetExpense()
         {
+
             return await _context.Expense.ToListAsync();
         }
 
         // GET: api/Expenses/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Expense>> GetExpense(int id)
+        public async Task<ActionResult<ExpensesViewModel>> GetExpense(int id)
         {
             var expense = await _context.Expense.FindAsync(id);
 
@@ -48,8 +58,8 @@ namespace lab2.Controllers
             {
                 return NotFound();
             }
-
-            return expense;
+            var expenseViewModel = _mapper.Map<ExpensesViewModel>(expense);
+            return expenseViewModel;
         }
         [HttpGet("{id}/Comments")]
         public ActionResult<ExpensesWithCommentsViewModel> GetCommentsForExpense(int id)
@@ -73,7 +83,11 @@ namespace lab2.Controllers
                 })
             });
 
-            return query.ToList()[0];
+            var query_v1 = _context.Expense.Where(p => p.Id == id).Select(p => _mapper.Map<ExpensesWithCommentsViewModel>(p));
+
+            return query_v1.ToList()[0];
+
+
         }
 
         [HttpPost("{id}/Comments")]
@@ -96,8 +110,11 @@ namespace lab2.Controllers
         // PUT: api/Expenses/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutExpense(int id, Expense expense)
+        public async Task<IActionResult> PutExpense(int id, ExpensesViewModel expenseRequest)
         {
+            Expense expense = _mapper.Map<Expense>(expenseRequest);
+
+
             if (id != expense.Id)
             {
                 return BadRequest();
@@ -119,6 +136,7 @@ namespace lab2.Controllers
                 {
                     throw;
                 }
+
             }
 
             return NoContent();
@@ -127,8 +145,9 @@ namespace lab2.Controllers
         // POST: api/Expenses
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Expense>> PostExpense(Expense expense)
+        public async Task<ActionResult<ExpensesViewModel>> PostExpense(ExpensesViewModel expenseRequest)
         {
+            Expense expense = _mapper.Map<Expense>(expenseRequest);
             _context.Expense.Add(expense);
             await _context.SaveChangesAsync();
 
