@@ -19,6 +19,9 @@ namespace lab2.Data
         }
         public DbSet<lab2.Models.Expense> Expense { get; set; }
         public DbSet<Comment> Comments { get; set; }
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<UserExpense> UsersExpenses { get; set; }
 
     }
 }

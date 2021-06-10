@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using lab2.Data;
 
 namespace lab2.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210610175551_AddUserExpense")]
+    partial class AddUserExpense
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -427,7 +429,7 @@ namespace lab2.Data.Migrations
                     b.Property<string>("ApplicationUserId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("ExpenseId")
+                    b.Property<int?>("ExpenseId")
                         .HasColumnType("int");
 
                     b.Property<double>("Percent")
@@ -536,9 +538,7 @@ namespace lab2.Data.Migrations
 
                     b.HasOne("lab2.Models.Expense", "Expense")
                         .WithMany()
-                        .HasForeignKey("ExpenseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ExpenseId");
 
                     b.Navigation("ApplicationUser");
 

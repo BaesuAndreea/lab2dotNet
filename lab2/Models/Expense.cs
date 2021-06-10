@@ -40,5 +40,6 @@ namespace lab2.Models
 
         public Types Type { get; set; }
         public List<Comment> Comments { get; set; }
+        public List<Order> Orders { get; set; }
     }
 }
