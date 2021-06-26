@@ -58,14 +58,14 @@ namespace lab2.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetAll()
+        public async Task<IEnumerable<ExpenseForUserResponse>> GetAll()
         {
             var user = await _userManager.FindByNameAsync(User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
-            var result = _context.UsersExpenses.Where(ue => ue.ApplicationUser.Id == user.Id).FirstOrDefault();
-            var resultViewModel = _mapper.Map<ExpenseForUserResponse>(result);
+            var result = await _context.UsersExpenses.Where(ue => ue.ApplicationUser.Id == user.Id).Include(e => e.Expense).Select(e => _mapper.Map<ExpenseForUserResponse>(e)).ToListAsync();
+            //var resultViewModel = _mapper.Map<ExpenseForUserResponse>(result);
 
-            return Ok(resultViewModel);
+            return result;
         }
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUserExpense(int id, PutUserExpeseRequest usrExp)
